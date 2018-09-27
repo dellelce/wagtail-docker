@@ -31,8 +31,7 @@ RUN addgroup -g "${GID}" "${GROUP}" && adduser -D -s /bin/sh \
 WORKDIR "${WTHOME}"
 COPY requirements.txt .
 
-RUN  . ${WTENV}/bin/activate \
-    && mkdir -p "${WTENV}" && cd "${WTENV}" \
+RUN    mkdir -p "${WTENV}" && cd "${WTENV}" \
     && ${PYTHON} -m venv . && . ${WTENV}/bin/activate \
     && pip install -U pip setuptools \
     && pip install -r ${WTHOME}/requirements.txt
