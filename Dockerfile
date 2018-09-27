@@ -23,6 +23,7 @@ RUN    mkdir -p "${WTENV}" && cd "${WTENV}" \
 ARG BASE=dellelce/uwsgi
 FROM $BASE as final
 
+ARG BASEDIR=/app/uwsgi
 ARG GID=2001
 ARG UID=2000
 ARG GROUP=wagtail
