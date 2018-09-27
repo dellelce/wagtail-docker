@@ -5,6 +5,7 @@ LABEL maintainer="Antonio Dell'Elce"
 
 ARG BASEDIR=/app/uwsgi
 ARG PYTHON=${BASEDIR}/bin/python3
+ARG USERNAME=wagtail
 
 # Extra mess for pillow
 RUN apk add zlib-dev jpeg-dev gcc binutils libc-dev
@@ -43,7 +44,7 @@ RUN addgroup -g "${GID}" "${GROUP}" && adduser -D -s /bin/sh -g "wagtail user" \
 RUN chown -R "${USERNAME}:${GROUP}" "${BASEDIR}" \
     && mkdir -p "${DATA}" && chown "${USERNAME}":"${GROUP}" "${DATA}" \
     && mkdir -p "${WTAPP}" && chown "${USERNAME}":"${GROUP}" "${WTAPP}" \
-    && echo 'export PATH="'${PREFIX}'/bin:$PATH"' >> ${WTHOME}/.profile \
+    && echo 'export PATH="'${BASEDIR}'/bin:$PATH"' >> ${WTHOME}/.profile \
     && echo '. "${WTENV}/bin/activate"' >> ${WTHOME}/.profile 
 
 USER ${USERNAME}
