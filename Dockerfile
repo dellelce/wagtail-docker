@@ -6,6 +6,9 @@ LABEL maintainer="Antonio Dell'Elce"
 ARG BASEDIR=/app/uwsgi
 ARG PYTHON=${BASEDIR}/bin/python3
 
+# Extra mess for pillow
+RUN apk add zlib-dev jpeg-dev gcc binutils libc-dev
+
 # commands are intended for busybox: if BASE is changed to non-BusyBox these may fail!
 ARG GID=2001
 ARG UID=2000
@@ -37,5 +40,10 @@ RUN    mkdir -p "${WTENV}" && cd "${WTENV}" \
     && pip install -r ${WTHOME}/requirements.txt
 
 USER ${USERNAME}
-
 VOLUME ${DATA}
+
+# Final stage
+ARG BASE=dellelce/uwsgi
+FROM $BASE as final
+
+COPY --from=build ${WTAPP} ${WTAPP}
