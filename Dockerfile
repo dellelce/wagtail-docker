@@ -30,19 +30,19 @@ ARG USERNAME=wagtail
 ARG DATA=/app/data/${USERNAME}
 ARG WTHOME=/home/${USERNAME}
 
-USER ${USERNAME}
 VOLUME ${DATA}
 
 # commands are intended for busybox: if BASE is changed to non-BusyBox these may fail!
 ENV ENV   $WTHOME/.profile
-RUN addgroup -g "${GID}" "${GROUP}" && adduser -D -s /bin/sh \
-    -g "wagtail user" \
-    -G "${GROUP}" -u "${UID}" \
-    "${USERNAME}" \
-    && chown -R "${USERNAME}:${GROUP}" "${BASEDIR}" \
+RUN addgroup -g "${GID}" "${GROUP}" && adduser -D -s /bin/sh -g "wagtail user" \
+    -G "${GROUP}" -u "${UID}" "${USERNAME}"
+
+RUN chown -R "${USERNAME}:${GROUP}" "${BASEDIR}" \
     && mkdir -p "${DATA}" && chown "${USERNAME}":"${GROUP}" "${DATA}" \
     && mkdir -p "${WTAPP}" && chown "${USERNAME}":"${GROUP}" "${WTAPP}" \
     && echo 'export PATH="'${PREFIX}'/bin:$PATH"' >> ${WTHOME}/.profile \
     && echo '. "${WTENV}/bin/activate"' >> ${WTHOME}/.profile 
+
+USER ${USERNAME}
 
 COPY --from=build ${WTAPP} ${WTAPP}
