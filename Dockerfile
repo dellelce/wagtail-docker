@@ -13,7 +13,7 @@ RUN apk add zlib-dev jpeg-dev gcc binutils libc-dev
 ARG WTAPP=/app/${USERNAME}
 ARG WTENV=${WTAPP}/wagtail-env
 
-COPY requirements.txt /tmp 
+COPY requirements.txt /tmp
 
 RUN    mkdir -p "${WTENV}" && cd "${WTENV}" \
     && ${PYTHON} -m venv . && . ${WTENV}/bin/activate \
@@ -34,8 +34,6 @@ ARG WTHOME=/home/${USERNAME}
 ARG WTAPP=/app/${USERNAME}
 ARG WTENV=${WTAPP}/wagtail-env
 
-VOLUME ${DATA}
-
 # commands are intended for busybox: if BASE is changed to non-BusyBox these may fail!
 ENV ENV   $WTHOME/.profile
 RUN addgroup -g "${GID}" "${GROUP}" && adduser -D -s /bin/sh -g "wagtail user" \
@@ -45,8 +43,10 @@ RUN chown -R "${USERNAME}:${GROUP}" "${BASEDIR}" \
     && mkdir -p "${DATA}" && chown "${USERNAME}":"${GROUP}" "${DATA}" \
     && mkdir -p "${WTAPP}" && chown "${USERNAME}":"${GROUP}" "${WTAPP}" \
     && echo 'export PATH="'${BASEDIR}'/bin:$PATH"' >> ${WTHOME}/.profile \
-    && echo '. "${WTENV}/bin/activate"' >> ${WTHOME}/.profile 
+    && echo '. "'${WTENV}'/bin/activate"' >> ${WTHOME}/.profile
 
 USER ${USERNAME}
+
+VOLUME ${DATA}
 
 COPY --from=build ${WTAPP} ${WTAPP}
