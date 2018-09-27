@@ -30,6 +30,8 @@ ARG GROUP=wagtail
 ARG USERNAME=wagtail
 ARG DATA=/app/data/${USERNAME}
 ARG WTHOME=/home/${USERNAME}
+ARG WTAPP=/app/${USERNAME}
+ARG WTENV=${WTAPP}/wagtail-env
 
 VOLUME ${DATA}
 
