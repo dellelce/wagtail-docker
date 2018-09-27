@@ -9,18 +9,32 @@ ARG PYTHON=${BASEDIR}/bin/python3
 # Extra mess for pillow
 RUN apk add zlib-dev jpeg-dev gcc binutils libc-dev
 
-# commands are intended for busybox: if BASE is changed to non-BusyBox these may fail!
+ARG WTAPP=/app/${USERNAME}
+ARG WTENV=${WTAPP}/wagtail-env
+
+COPY requirements.txt /tmp 
+
+RUN    mkdir -p "${WTENV}" && cd "${WTENV}" \
+    && ${PYTHON} -m venv . && . ${WTENV}/bin/activate \
+    && pip install -U pip setuptools \
+    && pip install -r /tmp/requirements.txt
+
+# Final stage
+ARG BASE=dellelce/uwsgi
+FROM $BASE as final
+
 ARG GID=2001
 ARG UID=2000
 ARG GROUP=wagtail
 ARG USERNAME=wagtail
 ARG DATA=/app/data/${USERNAME}
 ARG WTHOME=/home/${USERNAME}
-ARG WTAPP=/app/${USERNAME}
-ARG WTENV=${WTAPP}/wagtail-env
 
+USER ${USERNAME}
+VOLUME ${DATA}
+
+# commands are intended for busybox: if BASE is changed to non-BusyBox these may fail!
 ENV ENV   $WTHOME/.profile
-
 RUN addgroup -g "${GID}" "${GROUP}" && adduser -D -s /bin/sh \
     -g "wagtail user" \
     -G "${GROUP}" -u "${UID}" \
@@ -30,20 +44,5 @@ RUN addgroup -g "${GID}" "${GROUP}" && adduser -D -s /bin/sh \
     && mkdir -p "${WTAPP}" && chown "${USERNAME}":"${GROUP}" "${WTAPP}" \
     && echo 'export PATH="'${PREFIX}'/bin:$PATH"' >> ${WTHOME}/.profile \
     && echo '. "${WTENV}/bin/activate"' >> ${WTHOME}/.profile 
-
-WORKDIR "${WTHOME}"
-COPY requirements.txt .
-
-RUN    mkdir -p "${WTENV}" && cd "${WTENV}" \
-    && ${PYTHON} -m venv . && . ${WTENV}/bin/activate \
-    && pip install -U pip setuptools \
-    && pip install -r ${WTHOME}/requirements.txt
-
-USER ${USERNAME}
-VOLUME ${DATA}
-
-# Final stage
-ARG BASE=dellelce/uwsgi
-FROM $BASE as final
 
 COPY --from=build ${WTAPP} ${WTAPP}
