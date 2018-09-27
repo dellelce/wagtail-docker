@@ -1,0 +1,9 @@
+language: c
+notifications:
+   slack: skydreams:1FLUnEeqaNLinKq1p0lJf9F5
+services:
+ - docker
+env:
+ - BASE_IMAGE="dellelce/uwsgi" TARGET_IMAGE="dellelce/wagtail" PREFIX="/app/pg"
+script: 
+ - ./main.sh
