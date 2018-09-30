@@ -9,8 +9,7 @@ ARG USERNAME=wagtail
 
 # Extra mess for pillow & psycopg2 (python postgres library)
 RUN apk add --no-cache zlib-dev jpeg-dev gcc binutils libc-dev \
-                       postgresql-client
-
+                       postgresql-dev
 
 ARG WTAPP=/app/${USERNAME}
 ARG WTENV=${WTAPP}/wagtail-env
@@ -27,7 +26,7 @@ ARG BASE=dellelce/uwsgi
 FROM $BASE as final
 
 # Extra mess for psycopg2 (python postgres library)
-RUN apk add --no-cache postgresql-client
+RUN apk add --no-cache postgresql-libs
 
 ARG BASEDIR=/app/uwsgi
 ARG GID=2001
