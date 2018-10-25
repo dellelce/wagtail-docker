@@ -26,7 +26,8 @@ ARG BASE=dellelce/uwsgi
 FROM $BASE as final
 
 # Extra mess for psycopg2 (python postgres library)
-RUN apk add --no-cache postgresql-libs
+RUN apk add --no-cache postgresql-libs \
+                       jpeg
 
 ARG BASEDIR=/app/uwsgi
 ARG GID=2001
