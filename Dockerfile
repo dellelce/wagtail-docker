@@ -55,4 +55,10 @@ USER ${USERNAME}
 VOLUME ${DATA}
 WORKDIR ${DATA}
 
+RUN { du -ks $WTAPP; du -ks $WTAPP/*| sort -n; } | awk ' \
+    BEGIN { print "Space usage in install directory: KB, % & directory name"; } \
+    FNR == 1 { total = $1; next; }           \
+    $1 > 500 { printf ("%10d %03.3f%% %s\n", $1, ($1 / total) * 100, $2); } '
+
+
 COPY --from=build ${WTAPP} ${WTAPP}
